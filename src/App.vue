@@ -26,6 +26,9 @@ const currentLayout = computed(() => {
 
 useHead({
   title: __APP_ENV__.project_name,
-  meta: __APP_ENV__.metadata
+  meta: [
+    ...__APP_ENV__.metadata,                  // existing meta tags
+    { property: 'og:image', content: __APP_ENV__.og_image }  // new OG image
+  ]
 })
 </script>
