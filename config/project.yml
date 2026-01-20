@@ -3,4 +3,7 @@
   project_citation: "Curculionidae of the World Online. TaxonPages"
   project_url: http://catalog.curculionoidea.org/
   project_authors: "Yunakov, N., Girón Duque, J.C., Brown, S., Jilg, J., Meregalli, M., Anderson, R.S., del Río, M.G., Rincón, J., Cortés-Hernández, K., Cabras, A. (2026)."
+
+# Search Engine Optimization (SEO): Define content for <meta> tags that will be placed inside the <head> element of every html page
+# og_image is an Open Graph (OG) image, a preview picture that appears when a webpage link is shared on social media. Place file in /public/images, enter [your domain]/images/[filename], e.g. "https://taxonPages.com/images/og_image.png"
   og_image: "https://catalog.weevil-see.com/images/og_image.png"
