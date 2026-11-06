@@ -1,4 +1,5 @@
 ---
-  base_url: /
+  # Fork test site: served at weevil-see.com/taxa/
+  base_url: /taxa/
 
   hash_mode: true

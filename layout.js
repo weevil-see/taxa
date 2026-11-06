@@ -6,12 +6,14 @@
 import CuratorModeButton from './panels/_shared/curatorMode/CuratorModeButton.vue'
 import OtuTaxonWorksButton from './panels/_shared/curatorMode/OtuTaxonWorksButton.vue'
 import NewsUnreadDot from './panels/_shared/newsUnread/NewsUnreadDot.vue'
+import RobotsMeta from './panels/_shared/seo/RobotsMeta.vue'
 
 export default {
   // Renders nothing here: the "Leave curator mode" button moves itself into
   // the top bar.
   // The news dot also renders nothing here: it marks the News link with CSS.
-  'header:after': [CuratorModeButton, NewsUnreadDot],
+  // RobotsMeta adds a robots meta tag when config sets `robots`.
+  'header:after': [CuratorModeButton, NewsUnreadDot, RobotsMeta],
 
   // Taxon page, next to the JSON and DwC download buttons.
   'taxa_page:header:actions:end': OtuTaxonWorksButton
