@@ -4,15 +4,15 @@ lead: "The database has a comprehansive checklist of the Curculionidae. So far, 
 project: "TaxonPages: Curculionidae of the World"
 ---
 <div style="display: flex; justify-content: center; gap: 1rem;">
-  <a href="#/otus/723601/overview">
+  <RouterLink to="/otus/723601/overview">
     <img src="../assets/home/otiorhynchus_carinatopunctatus_500.png" 
          alt="Otiorhynchus (Nihus) carinatopunctatus (Retzius, 1783). Photo by Jakob Jilg">
-  </a>
+  </RouterLink>
   <RandomImage />
-  <a href="#/otus/729972/overview">
+  <RouterLink to="/otus/729972/overview">
     <img src="../assets/home/chlorophanus_viridis_500.png" 
          alt="Chlorophanus viridis (Linnaeus, 1758). Photo by Jakob Jilg">
-  </a>
+  </RouterLink>
 </div>
 
 <ProjectStatsStrip />
@@ -23,7 +23,7 @@ project: "TaxonPages: Curculionidae of the World"
 
 <div style="text-align: center; margin: 0 auto; line-height: 1.6;">
   <p style="font-weight: 500; font-size: 1.1rem;">
-    Enter a taxon name in the search field to start exploring (e.g., <a href="#/otus/712818/overview">Entiminae</a>).
+    Enter a taxon name in the search field to start exploring (e.g., <RouterLink to="/otus/712818/overview">Entiminae</RouterLink>).
   </p>
   <p style="font-size: 1rem;">
     This catalog is a <strong>work in progress</strong>. So far, the effort has been dedicated to the subfamily <strong>Entiminae</strong>.<br> 

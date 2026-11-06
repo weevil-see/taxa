@@ -32,6 +32,11 @@ jobs:
       - name: Build public view
         run: npm run build
 
+      # With hash_mode off: an entry page per OTU, 404.html and sitemap.xml,
+      # so every page has its own address on GitHub Pages.
+      - name: Write route pages
+        run: node scripts/write-route-pages.mjs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:

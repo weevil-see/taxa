@@ -7,6 +7,8 @@ import CuratorModeButton from './panels/_shared/curatorMode/CuratorModeButton.vu
 import OtuTaxonWorksButton from './panels/_shared/curatorMode/OtuTaxonWorksButton.vue'
 import NewsUnreadDot from './panels/_shared/newsUnread/NewsUnreadDot.vue'
 import RobotsMeta from './panels/_shared/seo/RobotsMeta.vue'
+// Side effect: old /#/... addresses -> /... once hash_mode is off.
+import './panels/_shared/seo/hashRedirect.js'
 
 export default {
   // Renders nothing here: the "Leave curator mode" button moves itself into
