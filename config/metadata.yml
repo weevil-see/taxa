@@ -1,8 +1,8 @@
 ---
 metadata:
   - name: description
-    content: TaxonPages is a tool to serve taxon pages.
+    content: A catalog of the weevils of the world (Curculionoidea), with names, classification, distribution, specimens, images and literature.
   - name: keywords
-    content: taxonpages, species, sfg
+    content: weevils, Curculionoidea, Curculionidae, Entiminae, taxonomy, catalog, distribution, specimens
   - name: robots
     content: follow

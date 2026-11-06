@@ -7,8 +7,11 @@ import CuratorModeButton from './panels/_shared/curatorMode/CuratorModeButton.vu
 import OtuTaxonWorksButton from './panels/_shared/curatorMode/OtuTaxonWorksButton.vue'
 import NewsUnreadDot from './panels/_shared/newsUnread/NewsUnreadDot.vue'
 import RobotsMeta from './panels/_shared/seo/RobotsMeta.vue'
-// Side effect: old /#/... addresses -> /... once hash_mode is off.
+import TaxonHead from './panels/_shared/seo/TaxonHead.vue'
+// Side effects at startup: old /#/... addresses -> /... once hash_mode is
+// off; the static head tags of a route page file are dropped.
 import './panels/_shared/seo/hashRedirect.js'
+import './panels/_shared/seo/staticHead.js'
 
 export default {
   // Renders nothing here: the "Leave curator mode" button moves itself into
@@ -18,5 +21,6 @@ export default {
   'header:after': [CuratorModeButton, NewsUnreadDot, RobotsMeta],
 
   // Taxon page, next to the JSON and DwC download buttons.
-  'taxa_page:header:actions:end': OtuTaxonWorksButton
+  // TaxonHead renders nothing: search-engine and link-preview tags.
+  'taxa_page:header:actions:end': [OtuTaxonWorksButton, TaxonHead]
 }
