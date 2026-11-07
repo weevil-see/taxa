@@ -56,6 +56,9 @@ const project = config('project.yml')
 const siteUrl = (setting(project, 'site_url') || setting(project, 'project_url')).replace(/\/?$/, '/')
 const quoted = (key) => project.match(new RegExp(`^\\s*${key}:\\s*['"]?(.+?)['"]?\\s*$`, 'm'))?.[1]
 const projectName = quoted('project_name')
+// A robots tag from config (the fork test site sets "noindex, nofollow"),
+// in the files too: RobotsMeta.vue only sets it once the app runs.
+const robots = quoted('robots')
 const citationSource = { project_authors: quoted('project_authors'), project_citation: quoted('project_citation') }
 const siteDescription =
   config('metadata.yml').match(/name:\s*description\s*\n\s*content:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? ''
@@ -80,6 +83,7 @@ function pageHtml({ title, description, route, jsonLd, cited }) {
   const url = route === null ? null : `${siteUrl}${route}`
   const tags = [
     `<title data-route-page>${escapeHtml(title)}</title>`,
+    ...(robots ? [`<meta data-route-page name="robots" content="${escapeHtml(robots)}" />`] : []),
     `<meta data-route-page name="description" content="${escapeHtml(description)}" />`,
     ...(url ? [`<link data-route-page rel="canonical" href="${escapeHtml(url)}" />`] : []),
     `<meta data-route-page property="og:title" content="${escapeHtml(title)}" />`,
