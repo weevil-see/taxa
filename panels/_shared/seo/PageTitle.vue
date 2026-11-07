@@ -33,8 +33,14 @@ import { taxonPageName, taxonPageTitle } from './pageTitle.js'
 import { FIXED_PAGES, fixedPageTitle } from './pageTitles.js'
 import { citationTags } from './citation.js'
 
-const { project_name: projectName, project_authors, project_citation, site_url, project_url } =
-  __APP_ENV__
+const {
+  project_name: projectName,
+  project_authors,
+  project_citation,
+  project_author_details,
+  site_url,
+  project_url
+} = __APP_ENV__
 const siteUrl = String(site_url || project_url || '').replace(/\/?$/, '/')
 const route = useRoute()
 
@@ -56,7 +62,7 @@ useHead(
     meta: citedTitle.value
       ? citationTags(
           { title: citedTitle.value, url: `${siteUrl}${route.path.replace(/^\//, '')}` },
-          { project_authors, project_citation }
+          { project_authors, project_citation, project_author_details }
           // A key per tag: the head manager would otherwise keep only one of
           // the repeated citation_author tags.
         ).map((tag, i) => ({ ...tag, key: `citation-${i}` }))

@@ -16,6 +16,26 @@ test('the project.yml author list splits into its authors and year', () => {
   assert.equal(authors.at(-1), 'Cabras, A.')
 })
 
+test('authors get their full name and ORCID from the details, in that order', () => {
+  const tags = citationTags(
+    { title: 'T', url: null },
+    {
+      project_authors: 'Doe, J., Roe, R. (2026).',
+      project_citation: 'C',
+      project_author_details: [{ name: 'Doe, J.', full_name: 'Jane Doe', orcid: '0000-0001-2345-6789' }]
+    }
+  )
+
+  assert.deepEqual(
+    tags.filter((t) => t.name.startsWith('citation_author')),
+    [
+      { name: 'citation_author', content: 'Jane Doe' },
+      { name: 'citation_author_orcid', content: 'https://orcid.org/0000-0001-2345-6789' },
+      { name: 'citation_author', content: 'Roe, R.' }
+    ]
+  )
+})
+
 test('a page gets title, authors, year, address and the full citation', () => {
   const tags = citationTags(
     { title: 'Aus bus L.', url: 'https://example.org/otus/1/overview' },

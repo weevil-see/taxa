@@ -25,6 +25,7 @@
 //   node scripts/write-route-pages.mjs
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import * as yaml from 'js-yaml'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -59,7 +60,13 @@ const projectName = quoted('project_name')
 // A robots tag from config (the fork test site sets "noindex, nofollow"),
 // in the files too: RobotsMeta.vue only sets it once the app runs.
 const robots = quoted('robots')
-const citationSource = { project_authors: quoted('project_authors'), project_citation: quoted('project_citation') }
+// The author details are a list, so project.yml is parsed for them.
+const projectConfig = yaml.load(project) || {}
+const citationSource = {
+  project_authors: projectConfig.project_authors,
+  project_citation: projectConfig.project_citation,
+  project_author_details: projectConfig.project_author_details
+}
 const siteDescription =
   config('metadata.yml').match(/name:\s*description\s*\n\s*content:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? ''
 
