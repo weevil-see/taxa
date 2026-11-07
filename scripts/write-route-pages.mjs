@@ -7,7 +7,8 @@
 //   ROOT_TAXON_NAME_ID, as <route>.html (GitHub Pages serves /a/b from
 //   a/b.html), so they answer normally (HTTP 200). Each carries its own
 //   title, description, canonical address and link-preview (Open Graph)
-//   tags, for crawlers that don't run JavaScript; a taxon's description comes
+//   tags, and a taxon page its schema.org Taxon data (JSON-LD, the shape the
+//   framework adds at runtime), for crawlers that don't run JavaScript; a taxon's description comes
 //   from panels/_shared/seo/taxonDescription.js, as on the live page. The
 //   tags are marked data-route-page; the app drops them when it starts
 //   (staticHead.js) and sets its own;
@@ -22,7 +23,7 @@
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { taxonDescription } from '../panels/_shared/seo/taxonDescription.js'
+import { rankName, taxonDescription, taxonTitle } from '../panels/_shared/seo/taxonDescription.js'
 
 // Curculionoidea: the OTUs whose pages are listed (not host plants and other
 // association partners, which have pages too but aren't this catalog's
@@ -69,7 +70,7 @@ const escapeHtml = (text) =>
   String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 // The entry page with a page's own head tags in place of the placeholder.
-function pageHtml({ title, description, route }) {
+function pageHtml({ title, description, route, jsonLd }) {
   const url = `${siteUrl}${route}`
   const tags = [
     `<title data-route-page>${escapeHtml(title)}</title>`,
@@ -81,6 +82,13 @@ function pageHtml({ title, description, route }) {
     `<meta data-route-page property="og:type" content="website" />`,
     `<meta data-route-page property="og:site_name" content="${escapeHtml(projectName)}" />`
   ]
+
+  if (jsonLd) {
+    // "<" escaped so no name can close the script element.
+    const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': [{ '@id': url, ...jsonLd }] })
+
+    tags.push(`<script data-route-page type="application/ld+json">${json.replace(/</g, '\\u003c')}</script>`)
+  }
 
   return entryHtml.replace(PLACEHOLDER, tags.join('\n    '))
 }
@@ -140,6 +148,47 @@ function ancestorsOf(name) {
   return out
 }
 
+// Valid name id -> its synonyms' full names, for schema.org alternateName.
+const synonymsOf = new Map()
+
+for (const name of names) {
+  if (name.cached_valid_taxon_name_id && name.cached_valid_taxon_name_id !== name.id) {
+    const list = synonymsOf.get(name.cached_valid_taxon_name_id) || []
+
+    list.push(fullName(name))
+    synonymsOf.set(name.cached_valid_taxon_name_id, list)
+  }
+}
+
+// Same shape as the framework's runtime Taxon (useSchemaOrg defineTaxon).
+function taxonJsonLd(name) {
+  const parent = nameById.get(name.parent_id)
+  const synonyms = synonymsOf.get(name.id) || []
+
+  return {
+    '@type': 'Taxon',
+    'http://purl.org/dc/terms/conformsTo': { '@id': 'https://bioschemas.org/profiles/Taxon/1.0-RELEASE' },
+    additionalType: ['dwc:Taxon', 'http://rs.tdwg.org/ontology/voc/TaxonConcept#TaxonConcept'],
+    name: fullName(name),
+    ...(synonyms.length ? { alternateName: synonyms } : {}),
+    scientificName: {
+      '@type': 'TaxonName',
+      name: fullName(name),
+      ...(name.cached_author_year ? { author: name.cached_author_year } : {}),
+      taxonRank: rankName(name.rank_string).toLowerCase()
+    },
+    ...(parent
+      ? {
+          parentTaxon: {
+            '@type': 'Taxon',
+            name: fullName(parent),
+            taxonRank: rankName(parent.rank_string).toLowerCase()
+          }
+        }
+      : {})
+  }
+}
+
 function otuHead(otu) {
   const name = nameById.get(otu.taxon_name_id)
 
@@ -148,7 +197,8 @@ function otuHead(otu) {
   const valid = nameById.get(name.cached_valid_taxon_name_id)
 
   return {
-    title: `${projectName} - ${fullName(name)}`,
+    title: taxonTitle(fullName(name), projectName),
+    jsonLd: taxonJsonLd(name),
     description: taxonDescription(
       {
         fullName: fullName(name),
@@ -167,7 +217,7 @@ const siteHead = { title: projectName, description: siteDescription }
 writePage('', siteHead)
 copyFileSync(`${DIST}index.html`, `${DIST}404.html`)
 Object.entries(FIXED_ROUTES).forEach(([route, label]) =>
-  writePage(route, { title: `${projectName} - ${label}`, description: siteDescription })
+  writePage(route, { title: `${label} | ${projectName}`, description: siteDescription })
 )
 
 const seen = new Set()

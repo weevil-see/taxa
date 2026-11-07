@@ -8,6 +8,7 @@ import OtuTaxonWorksButton from './panels/_shared/curatorMode/OtuTaxonWorksButto
 import NewsUnreadDot from './panels/_shared/newsUnread/NewsUnreadDot.vue'
 import RobotsMeta from './panels/_shared/seo/RobotsMeta.vue'
 import TaxonHead from './panels/_shared/seo/TaxonHead.vue'
+import PageTitle from './panels/_shared/seo/PageTitle.vue'
 // Side effects at startup: old /#/... addresses -> /... once hash_mode is
 // off; the static head tags of a route page file are dropped.
 import './panels/_shared/seo/hashRedirect.js'
@@ -18,7 +19,8 @@ export default {
   // the top bar.
   // The news dot also renders nothing here: it marks the News link with CSS.
   // RobotsMeta adds a robots meta tag when config sets `robots`.
-  'header:after': [CuratorModeButton, NewsUnreadDot, RobotsMeta],
+  // PageTitle sets the browser title (name first on taxon pages).
+  'header:after': [CuratorModeButton, NewsUnreadDot, RobotsMeta, PageTitle],
 
   // Taxon page, next to the JSON and DwC download buttons.
   // TaxonHead renders nothing: search-engine and link-preview tags.

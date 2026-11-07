@@ -1,9 +1,10 @@
 <!--
-  Search-engine and link-preview tags of a taxon page: description, canonical
-  address and Open Graph title/description/url. The description is the same
-  one scripts/write-route-pages.mjs writes into the page's static file
-  (taxonDescription.js), so a page says the same with and without JavaScript.
-  (The title is set by the framework's own taxon page.)
+  Search-engine and link-preview tags of a taxon page: title (name first),
+  description, canonical address and Open Graph tags. Title and description
+  are the ones scripts/write-route-pages.mjs writes into the page's static
+  file (taxonDescription.js), so a page says the same with and without
+  JavaScript. The title itself is applied by PageTitle.vue (the framework's
+  taxon page sets its own, which outlives the page).
 
   Placed in the taxon page header by the project's layout.js; renders
   nothing itself. One request: the name's ancestors, for its classification.
@@ -13,10 +14,11 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useHead } from '@unhead/vue'
 import { makeAPIRequest } from '@/utils/request'
-import { taxonDescription } from './taxonDescription.js'
+import { taxonDescription, taxonTitle } from './taxonDescription.js'
+import { taxonPageTitle } from './pageTitle.js'
 
 const props = defineProps({
   otuId: { type: [Number, String], default: null },
@@ -63,6 +65,13 @@ const description = computed(() =>
     : null
 )
 
+const title = computed(() =>
+  props.taxon?.full_name ? taxonTitle(props.taxon.full_name, projectName) : null
+)
+
+watch(title, (value) => (taxonPageTitle.value = value), { immediate: true })
+onBeforeUnmount(() => (taxonPageTitle.value = null))
+
 const url = computed(() => (props.otuId ? `${siteUrl}otus/${props.otuId}/overview` : null))
 
 useHead(
@@ -71,7 +80,7 @@ useHead(
       ? {
           meta: [
             { name: 'description', content: description.value },
-            { property: 'og:title', content: props.taxon.full_name },
+            { property: 'og:title', content: title.value },
             { property: 'og:description', content: description.value },
             { property: 'og:url', content: url.value },
             { property: 'og:type', content: 'website' },

@@ -1,4 +1,5 @@
-// The description of a taxon page for search engines and link previews.
+// The title and description of a taxon page for search engines and link
+// previews.
 // One formula for both places it is used, so a page says the same with and
 // without JavaScript:
 // - scripts/write-route-pages.mjs puts it in each page's static file;
@@ -6,6 +7,12 @@
 // No Vue and no '@/' imports, so node can use it.
 
 const FAMILY_GROUP_RANKS = ['Subtribe', 'Tribe', 'Subfamily', 'Family']
+
+// The taxon's name first: search results cut long titles off, and the name is
+// what people search for.
+export function taxonTitle(fullName, projectName) {
+  return `${fullName} | ${projectName}`
+}
 
 // "NomenclaturalRank::Iczn::SpeciesGroup::Species" -> "Species"
 export function rankName(rankString = '') {
