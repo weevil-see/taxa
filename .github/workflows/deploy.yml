@@ -29,6 +29,19 @@ jobs:
       - name: Install latest TaxonPages version
         run: npm install @sfgrp/taxonpages
 
+      # Only in the fork weevil-see/taxa, a test site: served under /taxa/
+      # (weevil-see.com/taxa/), with its own address for canonical links and
+      # the sitemap, and kept out of search engines. Set here, not in the
+      # committed config, so merging between the repos never carries them
+      # over (on catalog.curculionoidea.org they would break every address
+      # and drop the site from search engines).
+      - name: Fork test site settings
+        if: github.repository == 'weevil-see/taxa'
+        run: |
+          sed -i 's#^  base_url: /$#  base_url: /taxa/#' config/router.yml
+          grep -q '^  base_url: /taxa/$' config/router.yml
+          printf '  site_url: https://weevil-see.com/taxa/\n  robots: "noindex, nofollow"\n' >> config/project.yml
+
       - name: Build public view
         run: npm run build
 

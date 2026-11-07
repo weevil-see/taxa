@@ -36,3 +36,23 @@ test('a family-group taxon without family-group ancestors uses its parent', () =
     /^Curculionidae, a family in Curculionoidea\. /
   )
 })
+
+test('ancestors are ordered by parent links, not by id, and stop at the root', async () => {
+  const { ancestorsOf, ROOT_TAXON_NAME_ID: ROOT } = await import('./taxonDescription.js')
+  // ids deliberately out of depth order, as the API's id-sorted list can be
+  const names = [
+    { id: 5, cached: 'Coleoptera', rank_string: 'x::Order', parent_id: 1 },
+    { id: ROOT, cached: 'Curculionoidea', rank_string: 'x::Superfamily', parent_id: 5 },
+    { id: 3, cached: 'Otiorhynchini', rank_string: 'x::Tribe', parent_id: 9 },
+    { id: 9, cached: 'Entiminae', rank_string: 'x::Subfamily', parent_id: ROOT },
+    { id: 2, cached: 'Otiorhynchus', rank_string: 'x::Genus', parent_id: 3 },
+    { id: 7, cached: 'Otiorhynchus x', rank_string: 'x::Species', parent_id: 2 }
+  ]
+  const byId = new Map(names.map((n) => [n.id, n]))
+
+  assert.deepEqual(
+    ancestorsOf(byId.get(7), byId).map((a) => a.name),
+    ['Curculionoidea', 'Entiminae', 'Otiorhynchini', 'Otiorhynchus']
+  )
+  assert.deepEqual(ancestorsOf(byId.get(ROOT), byId), [])
+})

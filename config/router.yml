@@ -1,6 +1,5 @@
 ---
-  # Fork test site: served at weevil-see.com/taxa/
-  base_url: /taxa/
+  base_url: /
 
   # Normal addresses (/otus/…), so search engines see each page; see
   # scripts/write-route-pages.mjs and panels/_shared/seo/hashRedirect.js
