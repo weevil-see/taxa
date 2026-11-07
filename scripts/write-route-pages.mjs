@@ -18,7 +18,9 @@
 //   Titles, descriptions and citations come from panels/_shared/seo/
 //   (pageTitles.js, taxonDescription.js, citation.js), as on the live page. The tags are marked data-route-page; the app drops them when it
 //   starts (staticHead.js) and sets its own;
-// - sitemap.xml, listing the pages written.
+// - sitemap.xml, listing the pages written, and robots.txt pointing to it
+//   (replacing public/robots.txt, which stays as is when no sitemap is
+//   written: hash mode, or TaxonWorks failed).
 // If TaxonWorks fails, only 404.html is written and the deploy goes on.
 // Safe to run twice on one build: the head block is replaced, not stacked.
 //
@@ -267,9 +269,14 @@ async function writeRoutePages() {
       '\n</urlset>\n'
   )
 
+  // Every crawler finds the sitemap from here, not only the search engines
+  // it was submitted to. (A site under a sub-path, like the fork test site,
+  // has its robots.txt ignored: crawlers only read it at the domain's root.)
+  writeFile('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}sitemap.xml\n`)
+
   console.log(
-    `Wrote 404.html, ${Object.keys(FIXED_PAGES).length} fixed pages, ${otuRoutes.length} OTU pages ` +
-      `and sitemap.xml (${urls.length} addresses under ${siteUrl}).`
+    `Wrote 404.html, ${Object.keys(FIXED_PAGES).length} fixed pages, ${otuRoutes.length} OTU pages, ` +
+      `sitemap.xml (${urls.length} addresses under ${siteUrl}) and robots.txt.`
   )
 }
 
